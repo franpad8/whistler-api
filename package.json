@@ -1,0 +1,32 @@
+{
+  "name": "whistler",
+  "version": "1.0.0",
+  "description": "Twitter-like demo page",
+  "main": "index.js",
+  "scripts": {
+    "test": "jest --runInBand ./src/test",
+    "start": "nodemon src/index.js"
+  },
+  "author": "franpad8@gmail.com",
+  "license": "ISC",
+  "dependencies": {
+    "@types/jest": "^26.0.5",
+    "bcrypt": "^5.0.0",
+    "body-parser": "^1.19.0",
+    "cuid": "^2.1.8",
+    "express": "^4.17.1",
+    "express-validator": "^6.6.0",
+    "jest": "^26.1.0",
+    "jsonwebtoken": "^8.5.1",
+    "mongodb": "^3.5.9",
+    "mongoose": "^5.9.24",
+    "validator": "^13.1.1"
+  },
+  "devDependencies": {
+    "mongodb-memory-server": "^6.6.1",
+    "nodemon": "^2.0.4"
+  },
+  "jest": {
+    "testEnvironment": "node"
+  }
+}
