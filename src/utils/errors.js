@@ -46,6 +46,16 @@ class AuthenticationError extends Error {
     }
 }
 
+class AuthorizationError extends Error {
+    constructor (value) {
+        super(value)
 
+        this.statusCode = 403
 
-module.exports = { AuthenticationError, RequiredParameterError, InvalidPropertyError, UniqueConstraintError }
+        if(Error.captureStackTrace){
+            Error.captureStackTrace(this, UniqueConstraintError)
+        }
+    }
+}
+
+module.exports = { AuthenticationError, AuthorizationError, RequiredParameterError, InvalidPropertyError, UniqueConstraintError }

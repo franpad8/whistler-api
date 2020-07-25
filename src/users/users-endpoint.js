@@ -14,6 +14,9 @@ module.exports = function makeUserEndpointHandler(controllers) {
                 return controllers.deleteUserController(httpRequest)
 
             case 'PUT':
+                if(httpRequest.path.includes('unfollow')){
+                    return controllers.unfollowUserController(httpRequest)
+                }
                 if(httpRequest.path.includes('follow')){
                     return controllers.followUserController(httpRequest)
                 }

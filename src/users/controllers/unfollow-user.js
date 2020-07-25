@@ -1,8 +1,8 @@
 const makeHttpError = require('../../utils/http-error')
 
-module.exports = function makeFollowUserController(followUserUseCase) {
+module.exports = function makeUnfollowUserController(unfollowUserUseCase) {
 
-    return async function followUserController(httpRequest) {
+    return async function unfollowUserController(httpRequest) {
         try{
             if (!httpRequest.pathParams) {
                 return makeHttpError({
@@ -12,9 +12,9 @@ module.exports = function makeFollowUserController(followUserUseCase) {
             }
             const input = {
                 id: httpRequest.currentUser.id,
-                userToFollowId: httpRequest.pathParams.id
+                userToUnfollowId: httpRequest.pathParams.id
             }
-            const result = await followUserUseCase(input)
+            const result = await unfollowUserUseCase(input)
 
             return {
                 headers: {

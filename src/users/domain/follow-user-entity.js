@@ -25,6 +25,10 @@ module.exports.makeFollowUserEntity = (
         validateId(id)
         validateId(userToFollowId)
 
+        if (id.toString() === userToFollowId.toString()) {
+            throw new InvalidPropertyError('A user cannot follow/unfollow itself')
+        }
+
         return {
             id,
             userToFollowId

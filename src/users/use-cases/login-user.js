@@ -10,14 +10,12 @@ const makeLoginUserUseCase = ( userDb, jwt, md5 ) => {
         const userFound = await userDb.findByEmail(loginCredentials.getEmail())
 
         if(!userFound) {
-          // TODO: handle case   
           throw new AuthenticationError('wrong email or password')
         }
 
         const areEqual = await md5.compare(loginCredentials.getPassword(), userFound.hash)
 
         if (!areEqual) {
-          // TODO: handle case
           throw new AuthenticationError('wrong email or password')
         }
 

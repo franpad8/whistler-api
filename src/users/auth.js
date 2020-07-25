@@ -1,6 +1,7 @@
 const jwt = require('jsonwebtoken');
 const User = require('../db/models/user');
 const { ObjectId } = require('mongodb');
+const { AuthenticationError, AuthorizationError } = require('../utils/errors')
 
 module.exports.authenticate = async (req, res, next) => {
     const header = req.header('Authorization');
@@ -17,18 +18,31 @@ module.exports.authenticate = async (req, res, next) => {
                 req.user.id = user._id
                 return next();
              }
-             error = new Error('authenticated user not found');
+             error = new AuthenticationError('authenticated user not found');
              
         } else {
-            error = new Error('bad format for authorization header')
+            error = new AuthenticationError('bad format for authorization header')
         }
     } else {
 
-        error = new Error('missing Authorization header');
+        error = new AuthenticationError('missing Authorization header');
     }
     
-    error.code = 401;
     req.isAuthenticated = false;
     req.authError = error;
-    next();
+    return next();
+}
+
+module.exports.requireAuthentication = (req, res, next) => {
+    if (req.isAuthenticated) {
+        return next()
+    }
+    return next(new AuthenticationError('User must be Logged in'))
+}
+
+module.exports.requireToBeAdmin = (req, res, next) => {
+    if (req.isAuthenticated && req.user.isAdmin) {
+        return next()
+    }
+    return next(new AuthorizationError('User must be Admin'))
 }
