@@ -13,6 +13,12 @@ module.exports = function makeUserEndpointHandler(controllers) {
             case 'DELETE':
                 return controllers.deleteUserController(httpRequest)
 
+            case 'PUT':
+                if(httpRequest.path.includes('follow')){
+                    return controllers.followUserController(httpRequest)
+                }
+
+
             default:
                 return makeHttpError({
                     statusCode: 405,

@@ -44,6 +44,8 @@ function whistlesController(req, res) {
 app.post('/users', usersControllers)
 app.post('/users/login', usersControllers)
 app.delete('/users/:id', usersControllers)
+app.put('/users/follow/:id', usersControllers)
+
 
 function usersControllers(req, res) {
     const httpRequest = adaptRequest(req)

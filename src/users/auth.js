@@ -14,6 +14,7 @@ module.exports.authenticate = async (req, res, next) => {
              if (user) {
                 req.isAuthenticated = true;
                 req.user = user;
+                req.user.id = user._id
                 return next();
              }
              error = new Error('authenticated user not found');

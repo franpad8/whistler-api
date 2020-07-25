@@ -7,7 +7,8 @@ module.exports = function makeUserDB(userDBCollection) {
         update,
         findById,
         findByEmail,
-        remove
+        remove,
+        followUser
     })
 
     async function insert({ id: _id, email, username, hash, isAdmin }) {
@@ -43,6 +44,35 @@ module.exports = function makeUserDB(userDBCollection) {
     async function remove(id) {
         const { ok, deletedCount } = await userDBCollection.remove({ _id: id })
         return { ok: ok === 1, deletedCount }
+    }
+
+    async function followUser(id, userToFollowId) {
+        const user = await userDBCollection.findOne(id)
+        if (!user) {
+            throw Error('User Not Found')
+        }
+        
+        const userToFollow = await userDBCollection.findOne(userToFollowId)
+        if(!userToFollow) {
+            return { ok: true, message: 'User To follow no longer exists' }
+        }
+
+
+        if (user.following
+                .toObject()
+                .map(doc => doc.userId.toString())
+                .indexOf(userToFollow._id.toString()) !== -1) {
+            return { ok: true, message: 'Already following the user' }
+        }
+
+        user.following.push({ userId: userToFollowId })
+        userToFollow.followers.push({ userId: id})
+
+        await user.save()
+        await userToFollow.save()
+
+        return { ok: true }
+
     }
 
     function documentToUserObject(doc) {
