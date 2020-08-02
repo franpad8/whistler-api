@@ -4,6 +4,8 @@ const bodyParser = require('body-parser');
 //const { mongoConnect } = require('./db');
 const mongoose = require('mongoose');
 
+const cors = require('cors')
+
 const config = require('./config');
 const { authenticate, requireToBeAdmin, requireAuthentication } = require('./users/auth');
 
@@ -15,16 +17,19 @@ const adaptRequest = require('./utils/adapt-request')
 const makeHttpError = require('./utils/http-error');
 
 
+app.use(cors())
+
+
 app.use(bodyParser.json());
 
 app.use(authenticate);
-
 
 
 const whistlesController = makeController(handleWhistlesRequest)
 
 app.delete('/whistles/:whistleId', requireAuthentication, whistlesController)
 app.post('/whistles', requireAuthentication, whistlesController);
+app.get('/whistles', requireAuthentication, whistlesController);
 
 
 const usersController = makeController(handleUsersRequest)

@@ -1,5 +1,7 @@
 const { makeWhistle } = require('./whistle')
 const makeHttpError = require('../utils/http-error')
+const isValidId = require('../utils/is-valid-id')
+const { InvalidPropertyError } = require('../utils/errors')
 
 const makeWhistlesEndpointHandler = whistleList => {
 
@@ -10,7 +12,7 @@ const makeWhistlesEndpointHandler = whistleList => {
                 return postWhistle(httpRequest)
                 
             case 'GET':
-                return
+                return getWhistles(httpRequest)
 
             case 'DELETE':
                 return deleteWhistle(httpRequest)
@@ -61,6 +63,36 @@ const makeWhistlesEndpointHandler = whistleList => {
             })
         }
 
+
+    }
+
+    async function getWhistles(httpRequest) {
+        const user = httpRequest.currentUser
+        const { limit, afterId, untilId } = httpRequest.queryParams
+
+        try {
+            if (afterId && !isValidId(afterId)) {
+                throw new InvalidPropertyError('Query param \'afterId\' is not a valid id')
+            }
+
+            if (untilId && !isValidId(untilId)) {
+                throw new InvalidPropertyError('Query param \'untilId\' is not a valid id')
+            }
+            
+            const result = await whistleList.getTimeline({ user, limit, afterId, untilId })
+            return {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                statusCode: 200,
+                data: JSON.stringify(result)
+            }
+        } catch (error) {
+            return makeHttpError({
+                errorMessage: error.message,
+                statusCode: error.statusCode || 500
+            })
+        }
 
     }
 

@@ -7,6 +7,7 @@ module.exports = function makeWhistleList( db ) {
         findById,
         remove,
         getItems,
+        getTimeline,
         list,
         update
     })
@@ -29,12 +30,12 @@ module.exports = function makeWhistleList( db ) {
 
     async function findById(whistleId) {
         const _id = makeId(whistleId)
-        const document = await db.findById(_id)
+        const document = await db.findById(_id).lean()
         if (!document) {
             return null
         }
 
-        return documentToWhistle(document._doc)
+        return documentToWhistle(document)
 
     }
 
@@ -55,6 +56,34 @@ module.exports = function makeWhistleList( db ) {
             success: true,
             whistles: documents.map(doc => documentToWhistle(doc._doc))
         }
+    }
+
+    async function getTimeline({ user, limit=2, afterId, untilId }) {
+        const followingUsers = user.following.map(user => user.userId)
+        let criteria = {
+            $or: [{ creator: user.id },
+                  { creator: { $in: followingUsers } }
+                 ]
+        }
+
+        if (untilId) {
+            Object.assign(criteria, { _id: { $gte: makeId(untilId) } }) 
+            limit = 0
+        }
+        else if(afterId) {
+            Object.assign(criteria, { _id: { $lt: makeId(afterId) } }) 
+        }
+
+        const documents = await db.find(criteria)
+                                  .sort('-_id')
+                                  .limit(+limit)
+                                  .populate('creator')
+                                  .lean()
+        return {
+            success: true,
+            whistles: documents.map(doc => documentToWhistle(doc))
+        }
+
     }
 
     async function update() {
