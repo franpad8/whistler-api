@@ -12,6 +12,9 @@ const makeWhistlesEndpointHandler = whistleList => {
                 return postWhistle(httpRequest)
                 
             case 'GET':
+                if (httpRequest.path.includes('search')) {
+                    return getWhistlesByText(httpRequest)
+                }
                 return getWhistles(httpRequest)
 
             case 'DELETE':
@@ -80,6 +83,27 @@ const makeWhistlesEndpointHandler = whistleList => {
             }
             
             const result = await whistleList.getTimeline({ user, limit, afterId, untilId })
+            return {
+                headers: {
+                    'Content-Type': 'application/json'
+                },
+                statusCode: 200,
+                data: JSON.stringify(result)
+            }
+        } catch (error) {
+            return makeHttpError({
+                errorMessage: error.message,
+                statusCode: error.statusCode || 500
+            })
+        }
+
+    }
+
+    async function getWhistlesByText(httpRequest) {
+        const { text: searchText } = httpRequest.queryParams
+
+        try {
+            const result = await whistleList.findByText(searchText)
             return {
                 headers: {
                     'Content-Type': 'application/json'

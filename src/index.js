@@ -29,6 +29,7 @@ const whistlesController = makeController(handleWhistlesRequest)
 
 app.delete('/whistles/:whistleId', requireAuthentication, whistlesController)
 app.post('/whistles', requireAuthentication, whistlesController);
+app.get('/whistles/search', requireAuthentication, whistlesController);
 app.get('/whistles', requireAuthentication, whistlesController);
 
 

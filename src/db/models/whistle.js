@@ -19,6 +19,8 @@ const WhistleSchema = new Schema({
     }
 });
 
+WhistleSchema.index({ text: 'text' })
+
 WhistleSchema.statics.makeId = function (t) {
     return new Schema.Types.ObjectId(t);
 };

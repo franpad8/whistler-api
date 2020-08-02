@@ -6,7 +6,7 @@ module.exports = function makeWhistleList( db ) {
         add,
         findById,
         remove,
-        getItems,
+        findByText,
         getTimeline,
         list,
         update
@@ -39,15 +39,23 @@ module.exports = function makeWhistleList( db ) {
 
     }
 
+    async function findByText(searchString) {
+
+        const documents = await db.find({ $text: { $search: searchString } })
+                                  .populate('creator')
+                                  .sort('-_id')
+                                  .lean()
+        return Object.freeze({
+            success: true,
+            whistles: documents.map(doc => documentToWhistle(doc))
+        })
+    }
+
     async function remove({ whistleId: _id }) {
         const result = await db.deleteOne({ _id })
         return {
             success: result.deletedCount === 1
         }
-    }
-
-    async function getItems() {
-        
     }
 
     async function list() {
