@@ -66,7 +66,7 @@ module.exports = function makeWhistleList( db ) {
         }
     }
 
-    async function getTimeline({ user, limit=2, afterId, untilId }) {
+    async function getTimeline({ user, limit=4, afterId, untilId }) {
         const followingUsers = user.following.map(user => user.userId)
         let criteria = {
             $or: [{ creator: user.id },
